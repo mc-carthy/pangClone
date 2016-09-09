@@ -41,11 +41,11 @@ public class PlayerController : MonoBehaviour {
 			if (shootOnce) {
 				shootOnce = false;
 				StartCoroutine (PlayShootAnimation ());
-				Instantiate (arrows [0], new Vector3 (transform.position.x, height, 0f), Quaternion.identity);
+				Instantiate (arrows [2], new Vector3 (transform.position.x, height, 0f), Quaternion.identity);
 			} else if (shootTwice) {
 				shootTwice = false;
 				StartCoroutine (PlayShootAnimation ());
-				Instantiate (arrows [1], new Vector3 (transform.position.x, height, 0f), Quaternion.identity);
+				Instantiate (arrows [3], new Vector3 (transform.position.x, height, 0f), Quaternion.identity);
 			}
 		}
 	}
