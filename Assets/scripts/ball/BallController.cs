@@ -33,7 +33,6 @@ public class BallController : MonoBehaviour {
 
 	private void Move () {
 		if (moveLeft) {
-			print ("testLeft");
 			Vector3 temp = transform.position;
 			temp.x -= forceX * Time.deltaTime;
 			transform.position = temp;
