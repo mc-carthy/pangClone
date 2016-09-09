@@ -15,6 +15,10 @@ public class ArrowController : MonoBehaviour {
 	}
 
 	private void OnTriggerEnter2D (Collider2D trig) {
+		if (trig.tag == "largestBall" || trig.tag == "largeBall" || trig.tag == "mediumBall" || trig.tag == "smallBall" || trig.tag == "smallestBall") {
+			gameObject.SetActive (false);
+		}
+
 		if (trig.tag == "topBrick") {
 			gameObject.SetActive (false);
 		}
