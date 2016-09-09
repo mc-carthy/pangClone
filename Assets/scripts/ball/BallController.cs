@@ -33,6 +33,34 @@ public class BallController : MonoBehaviour {
 			}
 		}
 
+		if (
+			trig.tag == "unbreakableBrickTop" ||
+			trig.tag == "brokenBrickTop" ||
+			trig.tag == "unbreakableBrickTopVertical"
+		) {
+			rb.velocity = new Vector2 (0, 5);
+		} else if (
+			trig.tag == "unbreakableBrickBottom" ||
+			trig.tag == "brokenBrickBottom" ||
+			trig.tag == "unbreakableBrickBottomVertical"
+		) {
+			rb.velocity = new Vector2 (0, -2);
+		} else if (
+			trig.tag == "unbreakableBrickLeft" ||
+			trig.tag == "brokenBrickLeft" ||
+			trig.tag == "unbreakableBrickLeftVertical"
+		) {
+			moveLeft = true;
+			moveRight = false;
+		} else if (
+			trig.tag == "unbreakableBrickRight" ||
+			trig.tag == "brokenBrickRight" ||
+			trig.tag == "unbreakableBrickRightVertical"
+		) {
+			moveLeft = false;
+			moveRight = true;
+		}
+
 		if (trig.tag == "bottomBrick") {
 			rb.velocity = new Vector2 (0, forceY);
 		}

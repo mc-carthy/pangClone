@@ -123,6 +123,9 @@ public class ArrowController : MonoBehaviour {
 			trig.tag == "brokenBrickLeft" ||
 			trig.tag == "brokenBrickRight"
 		) {
+			BrickController brick = trig.gameObject.GetComponentInParent<BrickController> ();
+			brick.StartCoroutine (brick.BreakBrick ());
+
 			if (gameObject.tag == "firstArrow" || gameObject.tag == "firstStickyArrow") {
 				PlayerController.instance.ShootOnce (true);
 			} else if (gameObject.tag == "secondArrow" || gameObject.tag == "secondStickyArrow") {
