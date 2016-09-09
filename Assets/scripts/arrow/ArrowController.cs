@@ -3,7 +3,7 @@ using System.Collections;
 
 public class ArrowController : MonoBehaviour {
 
-	private float arrowSpeed = 3.0f;
+	private float arrowSpeed = 7.0f;
 	private bool canShootStickyArrow;
 
 	private void Start () {
