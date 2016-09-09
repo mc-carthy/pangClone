@@ -3,6 +3,8 @@ using System.Collections;
 
 public class PlayerController : MonoBehaviour {
 
+	public static PlayerController instance;
+
 	private float speed = 8.0f, maxVelocity = 4.0f;
 	[SerializeField]
 	private Rigidbody2D rb;
@@ -16,11 +18,14 @@ public class PlayerController : MonoBehaviour {
 	private AudioClip shootClip;
 	private float height;
 	private bool canWalk;
+	private bool shootOnce, shootTwice;
 
 	private void Awake () {
 		float cameraHeight = Camera.main.orthographicSize;
 		height = -cameraHeight - 0.8f;
 		canWalk = true;
+		shootOnce = shootTwice = true;
+		MakeInstance ();
 	}
 
 	private void Update () {
@@ -33,8 +38,29 @@ public class PlayerController : MonoBehaviour {
 
 	public void ShootArrow () {
 		if (Input.GetMouseButtonDown (0)) {
-			StartCoroutine (PlayShootAnimation ());
-			Instantiate (arrows [0], new Vector3 (transform.position.x, height, 0f), Quaternion.identity);
+			if (shootOnce) {
+				shootOnce = false;
+				StartCoroutine (PlayShootAnimation ());
+				Instantiate (arrows [0], new Vector3 (transform.position.x, height, 0f), Quaternion.identity);
+			} else if (shootTwice) {
+				shootTwice = false;
+				StartCoroutine (PlayShootAnimation ());
+				Instantiate (arrows [1], new Vector3 (transform.position.x, height, 0f), Quaternion.identity);
+			}
+		}
+	}
+
+	public void ShootOnce (bool shootOnce) {
+		this.shootOnce = shootOnce;
+	}
+
+	public void ShootTwice (bool shootTwice) {
+		this.shootTwice = shootTwice;
+	}
+
+	private void MakeInstance () {
+		if (instance == null) {
+			instance = this;
 		}
 	}
 

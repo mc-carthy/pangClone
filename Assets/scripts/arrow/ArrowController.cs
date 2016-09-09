@@ -16,11 +16,11 @@ public class ArrowController : MonoBehaviour {
 
 	private void OnTriggerEnter2D (Collider2D trig) {
 		if (trig.tag == "largestBall" || trig.tag == "largeBall" || trig.tag == "mediumBall" || trig.tag == "smallBall" || trig.tag == "smallestBall") {
-			gameObject.SetActive (false);
+			DeactivateArrow ();
 		}
 
 		if (trig.tag == "topBrick") {
-			gameObject.SetActive (false);
+			DeactivateArrow ();
 		}
 	}
 
@@ -28,5 +28,14 @@ public class ArrowController : MonoBehaviour {
 		Vector3 temp = transform.position;
 		temp.y += arrowSpeed * Time.unscaledDeltaTime;
 		transform.position = temp;
+	}
+
+	private void DeactivateArrow () {
+		if (gameObject.tag == "firstArrow" || gameObject.tag == "firstStickyArrow") {
+			PlayerController.instance.ShootOnce (true);
+		} else if (gameObject.tag == "secondArrow" || gameObject.tag == "secondStickyArrow") {
+			PlayerController.instance.ShootTwice (true);
+		}
+		gameObject.SetActive (false);
 	}
 }
