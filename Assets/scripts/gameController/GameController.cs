@@ -24,6 +24,11 @@ public class GameController : MonoBehaviour {
 	public bool[] achievements;
 	public bool[] collectedItems;
 
+	private void Awake () {
+		MakeSingleton ();
+		InitializeVariables ();
+	}
+
 	public void Save () {
 		FileStream file = null;
 
@@ -71,7 +76,94 @@ public class GameController : MonoBehaviour {
 				file.Close ();
 			}
 		}
-	}	
+	}
+
+	private void MakeSingleton () {
+		if (instance == null) {
+			instance = this;
+			DontDestroyOnLoad (gameObject);
+		} else {
+			Destroy (gameObject);
+		}
+	}
+
+	private void InitializeVariables () {
+		Load ();
+		if (data != null) {
+			isGameStartedForFirstTime = data.GetIsGameStartedForFirstTime ();
+		} else {
+			isGameStartedForFirstTime = true;
+		}
+
+		if (isGameStartedForFirstTime) {
+			selectedPlayer = 0;
+			selectedWeapon = 0;
+			highscore = 0;
+			coins = 0;
+
+			isGameStartedForFirstTime = false;
+			isMusicOn = false;
+
+			players = new bool[6];
+			levels = new bool[40];
+			weapons = new bool[4];
+			achievements = new bool[8];
+			collectedItems = new bool[40];
+
+			players [0] = true;
+			for (int i = 1; i < players.Length; i++) {
+				players [i] = false;
+			}
+
+			levels [0] = true;
+			for (int i = 1; i < levels.Length; i++) {
+				levels [i] = false;
+			}
+
+			weapons [0] = true;
+			for (int i = 1; i < weapons.Length; i++) {
+				weapons [i] = false;
+			}
+
+			for (int i = 0; i < achievements.Length; i++) {
+				achievements [i] = false;
+			}
+
+			for (int i = 0; i < collectedItems.Length; i++) {
+				collectedItems [i] = false;
+			}
+
+			data = new GameData ();
+
+			data.SetIsGameStartedForFirstTime (isGameStartedForFirstTime);
+			data.SetIsMusicOn (isMusicOn);
+			data.SetSelectedPlayer (selectedPlayer);
+			data.SetSelectedWeapon (selectedWeapon);
+			data.SetCoins (coins);
+			data.SetHighscore (highscore);
+			data.SetPlayers (players);
+			data.SetLevels (levels);
+			data.SetWeapons (weapons);
+			data.SetAchievements (achievements);
+			data.SetCollectedItems (collectedItems);
+
+			Save ();
+
+			Load ();
+		} else {
+			isGameStartedForFirstTime = data.SetIsGameStartedForFirstTime ();
+			isMusicOn = data.SetIsMusicOn ();
+			selectedPlayer = data.SetSelectedPlayer ();
+			selectedWeapon = data.SetSelectedWeapon ();
+			coins = data.SetCoins ();
+			highscore = data.SetHighscore ();
+			players = data.SetPlayers ();
+			levels = data.SetLevels ();
+			weapons = data.SetWeapons ();
+			achievements = data.SetAchievements ();
+			collectedItems = data.SetCollectedItems ();
+		}
+	}
 }
 
 [Serializable]
