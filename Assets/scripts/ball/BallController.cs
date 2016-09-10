@@ -58,7 +58,7 @@ public class BallController : MonoBehaviour {
 			trig.tag == "unbreakableBrickRightVertical"
 		) {
 			moveLeft = false;
-			moveRight = true;
+			moveRight = true;	
 		}
 
 		if (trig.tag == "bottomBrick") {
