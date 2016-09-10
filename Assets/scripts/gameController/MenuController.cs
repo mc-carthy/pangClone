@@ -79,6 +79,12 @@ public class MenuController : MonoBehaviour {
 
 	}
 
+	public void ShopButton () {
+		MusicController.instance.PlayClickClip ();
+		SceneManager.LoadScene ("shopMenu", LoadSceneMode.Single);
+
+	}
+
 	private IEnumerator DisableSettingsButtonWhilePlayingAnimation () {
 		if (canTouchSettingsButton) {
 			if (hidden) {
