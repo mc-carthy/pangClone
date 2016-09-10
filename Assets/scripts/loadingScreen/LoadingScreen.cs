@@ -10,6 +10,7 @@ public class LoadingScreen : MonoBehaviour {
 
 	private void Awake () {
 		MakeSingleton ();
+		Hide ();
 	}
 
 	public void PlayLoadingScreen () {
@@ -39,7 +40,7 @@ public class LoadingScreen : MonoBehaviour {
 
 	private IEnumerator ShowLoadingScreen () {
 		Show ();
-		yield return new WaitForSeconds (1f);
+		yield return StartCoroutine(MyCoroutine.WaitForRealSeconds (1f));
 		Hide ();
 
 		if (GameplayController.instance != null) {

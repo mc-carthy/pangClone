@@ -143,6 +143,9 @@ public class PlayerMenuController : MonoBehaviour {
 				GameController.instance.selectedWeapon = selectedWeapon;
 				GameController.instance.Save ();
 			} else {
+
+				// TODO: This while loop is crashing the game, seemingly with an out of range exception, fix
+
 				selectedWeapon++;
 				if (selectedWeapon == weapons.Length) {
 					selectedWeapon = 0;

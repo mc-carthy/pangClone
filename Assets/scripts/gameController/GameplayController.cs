@@ -26,6 +26,7 @@ public class GameplayController : MonoBehaviour {
 
 	private void Awake () {
 		CreateInstance ();
+		InitializeBricksAndPlayer ();
 	}
 
 	private void Start () {
@@ -82,5 +83,26 @@ public class GameplayController : MonoBehaviour {
 		if (hasLevelBegun) {
 			CountdownAndBeginLevel ();
 		}
+	}
+
+	private void InitializeBricksAndPlayer () {
+
+		coordinates = Camera.main.ScreenToWorldPoint (new Vector3 (Screen.width, Screen.height, 0));
+
+		int index = Random.Range (0, topAndBottomBricks.Length);
+
+		topBrick = Instantiate(topAndBottomBricks[index]);
+		bottomBrick = Instantiate (topAndBottomBricks [index]);
+		leftBrick = Instantiate (leftBricks [index], new Vector3 (0, 0, 0), Quaternion.Euler (new Vector3 (0, 0, 270))) as GameObject;
+		rightBrick = Instantiate (rightBricks [index], new Vector3 (0, 0, 0), Quaternion.Euler (new Vector3 (0, 0, 90))) as GameObject;
+
+		topBrick.tag = "topBrick";
+
+		topBrick.transform.position = new Vector3 (-coordinates.x + 9, coordinates.y, 0);
+		bottomBrick.transform.position = new Vector3 (-coordinates.x + 9, -coordinates.y, 0);
+		leftBrick.transform.position = new Vector3 (coordinates.x, coordinates.y - 5, 0);
+		rightBrick.transform.position = new Vector3 (-coordinates.x, coordinates.y - 5, 0);
+
+		Instantiate (players [GameController.instance.selectedPlayer]);
 	}
 }
