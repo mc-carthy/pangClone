@@ -9,12 +9,13 @@ public class GameController : MonoBehaviour {
 	public static GameController instance;
 	private GameData data;
 
-	public int currentLevel = -1;
-	public int currentScore;
-	public int currentLives;
 	public bool isGameStartedFromLevelMenu;
 	public bool isGameStartedForFirstTime;
 	public bool isMusicOn;
+	public bool doubleCoins;
+	public int currentLevel = -1;
+	public int currentScore;
+	public int currentLives;
 	public int selectedPlayer;
 	public int selectedWeapon;
 	public int coins;
@@ -40,6 +41,7 @@ public class GameController : MonoBehaviour {
 			if (data != null) {
 				data.SetIsGameStartedForFirstTime(isGameStartedForFirstTime);
 				data.SetIsMusicOn(isMusicOn);
+				data.SetDoubleCoins(doubleCoins);
 				data.SetSelectedPlayer(selectedPlayer);
 				data.SetSelectedWeapon(selectedWeapon);
 				data.SetCoins(coins);
@@ -104,6 +106,7 @@ public class GameController : MonoBehaviour {
 
 			isGameStartedForFirstTime = false;
 			isMusicOn = false;
+			doubleCoins = false;
 
 			players = new bool[6];
 			levels = new bool[40];
@@ -138,6 +141,7 @@ public class GameController : MonoBehaviour {
 
 			data.SetIsGameStartedForFirstTime (isGameStartedForFirstTime);
 			data.SetIsMusicOn (isMusicOn);
+			data.SetDoubleCoins (doubleCoins);
 			data.SetSelectedPlayer (selectedPlayer);
 			data.SetSelectedWeapon (selectedWeapon);
 			data.SetCoins (coins);
@@ -154,6 +158,7 @@ public class GameController : MonoBehaviour {
 		} else {
 			isGameStartedForFirstTime = data.GetIsGameStartedForFirstTime ();
 			isMusicOn = data.GetIsMusicOn ();
+			doubleCoins = data.GetDoubleCoins ();
 			selectedPlayer = data.GetSelectedPlayer ();
 			selectedWeapon = data.GetSelectedWeapon ();
 			coins = data.GetCoins ();
@@ -172,6 +177,7 @@ class GameData {
 
 	private bool isGameStartedForFirstTime;
 	private bool isMusicOn;
+	private bool doubleCoins;
 	private int selectedPlayer;
 	private int selectedWeapon;
 	private int coins;
@@ -196,6 +202,14 @@ class GameData {
 
 	public bool GetIsMusicOn () {
 		return isMusicOn;
+	}
+
+	public void SetDoubleCoins (bool doubleCoins) {
+		this.doubleCoins = doubleCoins;
+	}
+
+	public bool GetDoubleCoins () {
+		return doubleCoins;
 	}
 
 	public void SetSelectedPlayer (int selectedPlayer) {

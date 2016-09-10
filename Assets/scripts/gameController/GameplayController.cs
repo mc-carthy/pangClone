@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using System.Collections;
 
@@ -19,6 +20,8 @@ public class GameplayController : MonoBehaviour {
 	private GameObject[] players;
 	[SerializeField]
 	private GameObject[] endOfLevelRewards;
+	[SerializeField]
+	private Button pauseBtn;
 	private GameObject topBrick, bottomBrick, leftBrick, rightBrick;
 	private Vector3 coordinates;
 	private float countdownBeforeLevelBegins = 3.0f;
@@ -39,6 +42,23 @@ public class GameplayController : MonoBehaviour {
 
 	public void SetHasLevelBegun (bool hasLevelBegun) {
 		this.hasLevelBegun = hasLevelBegun;
+	}
+
+	public void PlayerDied () {
+		countdownLevel = false;
+		pauseBtn.interactable = false;
+		isLevelInProgress = false;
+
+		smallBallsCount = 0;
+		playerLives--;
+		GameController.instance.currentLives = playerLives;
+		GameController.instance.currentScore = playerScore;
+
+		if (playerLives < 0) {
+
+		} else {
+			StartCoroutine (PlayerDiedRestartLevel ());
+		}
 	}
 
 	private void CreateInstance () {
@@ -83,6 +103,10 @@ public class GameplayController : MonoBehaviour {
 		if (hasLevelBegun) {
 			CountdownAndBeginLevel ();
 		}
+
+		if (countdownLevel) {
+			LevelCountdownTime ();
+		}
 	}
 
 	private void InitializeBricksAndPlayer () {
@@ -104,5 +128,73 @@ public class GameplayController : MonoBehaviour {
 		rightBrick.transform.position = new Vector3 (-coordinates.x, coordinates.y - 5, 0);
 
 		Instantiate (players [GameController.instance.selectedPlayer]);
+	}
+
+	private void LevelCountdownTime () {
+		if (Time.timeScale == 1) {
+			levelTime -= Time.deltaTime;
+			levelTimerText.text = levelTime.ToString ("F0");
+
+			if (levelTime <= 0) {
+				playerLives--;
+				GameController.instance.currentLives = playerLives;
+				GameController.instance.currentScore = playerScore;
+
+				if (playerLives < 0) {
+					// prompt to watch a video to watch lives
+				} else {
+					StartCoroutine (PlayerDiedRestartLevel ());
+				}
+			}
+		}
+	}
+
+	private IEnumerator PlayerDiedRestartLevel () {
+		isLevelInProgress = false;
+
+		coins = 0;
+		smallBallsCount = 0;
+
+		Time.timeScale = 0;
+
+		if (LoadingScreen.instance != null) {
+			LoadingScreen.instance.FadeOut ();
+		}
+
+		yield return StartCoroutine (MyCoroutine.WaitForRealSeconds (1.25f));
+
+		SceneManager.LoadScene (SceneManager.GetActiveScene ().name, LoadSceneMode.Single);
+
+		if (LoadingScreen.instance != null) {
+			LoadingScreen.instance.PlayFadeInAnimation ();
+		}
+	}
+
+	private IEnumerator LevelCompleted () {
+		countdownLevel = false;
+		pauseBtn.interactable = false;
+
+		int unlockedLevel = GameController.instance.currentLevel;
+		unlockedLevel++;
+
+		if (unlockedLevel < GameController.instance.levels.Length) {
+			GameController.instance.levels[unlockedLevel] = true;
+		}
+
+		Instantiate (endOfLevelRewards [GameController.instance.currentLevel], new Vector3 (0, Camera.main.orthographicSize, 0), Quaternion.identity);
+
+		if (GameController.instance.doubleCoins) {
+			coins *= 2;
+		}
+		GameController.instance.coins = coins;
+		GameController.instance.Save ();
+
+		yield return StartCoroutine (MyCoroutine.WaitForRealSeconds (4f));
+		isLevelInProgress = false;
+		PlayerController.instance.StopMoving ();
+		Time.timeScale = 0;
+
+		levelFinishedPanel.SetActive (true);
+		showScoreAtEndOfLevelText.text = playerScore.ToString ();
 	}
 }

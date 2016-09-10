@@ -19,6 +19,7 @@ public class PlayerController : MonoBehaviour {
 	private float height;
 	private bool canWalk;
 	private bool shootOnce, shootTwice;
+	private bool moveLeft, moveRight;
 
 	private void Awake () {
 		float cameraHeight = Camera.main.orthographicSize;
@@ -56,6 +57,11 @@ public class PlayerController : MonoBehaviour {
 
 	public void ShootTwice (bool shootTwice) {
 		this.shootTwice = shootTwice;
+	}
+
+	public void StopMoving () {
+		moveLeft = moveRight = false;
+		anim.SetBool ("walk", false);
 	}
 
 	private void MakeInstance () {
