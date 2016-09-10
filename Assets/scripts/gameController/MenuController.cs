@@ -27,8 +27,10 @@ public class MenuController : MonoBehaviour {
 
 		if (GameController.instance.isMusicOn) {
 			musicButton.image.sprite = musicButtonSprites [1];
+			MusicController.instance.PlayBGMusic ();
 		} else {
 			musicButton.image.sprite = musicButtonSprites [0];
+			MusicController.instance.StopBGMusic ();
 		}
 		infoIndex = 0;
 		infoImage.sprite = infoSprites [infoIndex];
@@ -41,10 +43,12 @@ public class MenuController : MonoBehaviour {
 	public void MusicButtonToggle () {
 		if (GameController.instance.isMusicOn) {
 			musicButton.image.sprite = musicButtonSprites [0];
+			MusicController.instance.StopBGMusic ();
 			GameController.instance.isMusicOn = false;
 			GameController.instance.Save ();
 		} else {
 			musicButton.image.sprite = musicButtonSprites [1];
+			MusicController.instance.PlayBGMusic ();
 			GameController.instance.isMusicOn = true;
 			GameController.instance.Save ();
 		}
@@ -66,6 +70,10 @@ public class MenuController : MonoBehaviour {
 		}
 
 		infoImage.sprite = infoSprites [infoIndex];
+	}
+
+	public void PlayButton () {
+		MusicController.instance.PlayClickClip ();
 	}
 
 	private IEnumerator DisableSettingsButtonWhilePlayingAnimation () {
