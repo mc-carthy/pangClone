@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using System.Collections;
 
@@ -74,6 +75,8 @@ public class MenuController : MonoBehaviour {
 
 	public void PlayButton () {
 		MusicController.instance.PlayClickClip ();
+		SceneManager.LoadScene ("playerMenu", LoadSceneMode.Single);
+
 	}
 
 	private IEnumerator DisableSettingsButtonWhilePlayingAnimation () {

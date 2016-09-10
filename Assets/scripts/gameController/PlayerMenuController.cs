@@ -13,6 +13,14 @@ public class PlayerMenuController : MonoBehaviour {
 	public Sprite[] weaponArrows;
 	public int selectedWeapon;
 	public int selectedPlayer;
+	public GameObject buyPlayerPanel;
+	public Button yesBtn;
+	public Text buyPlayerText;
+	public GameObject coinShop;
+
+	private void Start () {
+		InitializePlayerController ();
+	}
 
 	public void GoToLevelMenu () {
 		SceneManager.LoadScene ("levelMenu", LoadSceneMode.Single);
@@ -22,6 +30,7 @@ public class PlayerMenuController : MonoBehaviour {
 		SceneManager.LoadScene ("menu", LoadSceneMode.Single);
 	}
 
+	/*
 	public void Player1Button () {
 		if (selectedPlayer != 0) {
 			selectedPlayer = 0;
@@ -59,6 +68,137 @@ public class PlayerMenuController : MonoBehaviour {
 				}
 			}
 		}
+	}
+
+	public void PirateButton () {
+		if (players [1]) {
+			if (selectedPlayer != 1) {
+				selectedPlayer = 1;
+				selectedWeapon = 0;
+
+				weaponIcons [selectedPlayer].gameObject.SetActive (true);
+				weaponIcons [selectedPlayer].sprite = weaponArrows [selectedWeapon];
+
+				for (int i = 0; i < weaponIcons.Length; i++) {
+					if (i == selectedPlayer) {
+						continue;
+					}
+					weaponIcons [i].gameObject.SetActive (false);
+				}
+				GameController.instance.selectedPlayer = selectedPlayer;
+				GameController.instance.selectedWeapon = selectedWeapon;
+				GameController.instance.Save ();
+			} else {
+				selectedWeapon++;
+				if (selectedWeapon == weapons.Length) {
+					selectedWeapon = 0;
+				}
+				bool foundWeapon = true;
+
+				while (foundWeapon) {
+					if (weapons [selectedWeapon]) {
+						weaponIcons [selectedPlayer].sprite = weaponArrows [selectedWeapon];
+						GameController.instance.selectedWeapon = selectedWeapon;
+						GameController.instance.Save ();
+						foundWeapon = false;
+					} else {
+						if (selectedWeapon == weapons.Length) {
+							selectedWeapon = 0;
+						}
+					}
+				}
+			}
+		} else {
+			if (GameController.instance.coins >= 7000) {
+				buyPlayerPanel.SetActive (true);
+				buyPlayerText.text = "Do You Want To Purchase";
+				yesBtn.onClick.RemoveAllListeners ();
+				yesBtn.onClick.AddListener (() => BuyPlayer (1));
+			} else {
+				buyPlayerPanel.SetActive (true);
+				buyPlayerText.text = "You Don't Have Enough Coins. Do You Want To Purchase More Coins?";
+				yesBtn.onClick.RemoveAllListeners ();
+				yesBtn.onClick.AddListener (() => OpenCoinShop());
+			}
+		}
+	}
+	*/
+
+	public void GenericPlayerButton (int playerIndex) {
+		if (players [playerIndex]) {
+			if (selectedPlayer != playerIndex) {
+				selectedPlayer = playerIndex;
+				selectedWeapon = 0;
+
+				weaponIcons [selectedPlayer].gameObject.SetActive (true);
+				weaponIcons [selectedPlayer].sprite = weaponArrows [selectedWeapon];
+
+				for (int i = 0; i < weaponIcons.Length; i++) {
+					if (i == selectedPlayer) {
+						continue;
+					}
+					weaponIcons [i].gameObject.SetActive (false);
+				}
+				GameController.instance.selectedPlayer = selectedPlayer;
+				GameController.instance.selectedWeapon = selectedWeapon;
+				GameController.instance.Save ();
+			} else {
+				selectedWeapon++;
+				if (selectedWeapon == weapons.Length) {
+					selectedWeapon = 0;
+				}
+				bool foundWeapon = true;
+
+				while (foundWeapon) {
+					if (weapons [selectedWeapon]) {
+						weaponIcons [selectedPlayer].sprite = weaponArrows [selectedWeapon];
+						GameController.instance.selectedWeapon = selectedWeapon;
+						GameController.instance.Save ();
+						foundWeapon = false;
+					} else {
+						if (selectedWeapon == weapons.Length) {
+							selectedWeapon = 0;
+						}
+					}
+				}
+			}
+		} else {
+			if (GameController.instance.coins >= 7000) {
+				buyPlayerPanel.SetActive (true);
+				buyPlayerText.text = "Do You Want To Purchase ";
+				yesBtn.onClick.RemoveAllListeners ();
+				yesBtn.onClick.AddListener (() => BuyPlayer (playerIndex));
+			} else {
+				buyPlayerPanel.SetActive (true);
+				buyPlayerText.text = "You Don't Have Enough Coins. Do You Want To Purchase More Coins?";
+				yesBtn.onClick.RemoveAllListeners ();
+				yesBtn.onClick.AddListener (() => OpenCoinShop());
+			}
+		}
+	}
+
+	public void BuyPlayer (int index) {
+		GameController.instance.players [index] = true;
+		GameController.instance.coins -= 7000;
+		GameController.instance.Save ();
+		InitializePlayerController ();
+
+		buyPlayerPanel.SetActive (false);
+	}
+
+	public void OpenCoinShop () {
+		if (buyPlayerPanel.activeInHierarchy) {
+			buyPlayerPanel.SetActive (false);
+		}
+		coinShop.SetActive (true);
+	}
+
+	public void CloseCoinShop () {
+		coinShop.SetActive (false);
+	}
+
+	public void DontBuyPlayerOrCoins () {
+		buyPlayerPanel.SetActive (false);
 	}
 
 	private void InitializePlayerController () {
