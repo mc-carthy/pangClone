@@ -151,17 +151,17 @@ public class GameController : MonoBehaviour {
 
 			Load ();
 		} else {
-			isGameStartedForFirstTime = data.SetIsGameStartedForFirstTime ();
-			isMusicOn = data.SetIsMusicOn ();
-			selectedPlayer = data.SetSelectedPlayer ();
-			selectedWeapon = data.SetSelectedWeapon ();
-			coins = data.SetCoins ();
-			highscore = data.SetHighscore ();
-			players = data.SetPlayers ();
-			levels = data.SetLevels ();
-			weapons = data.SetWeapons ();
-			achievements = data.SetAchievements ();
-			collectedItems = data.SetCollectedItems ();
+			isGameStartedForFirstTime = data.GetIsGameStartedForFirstTime ();
+			isMusicOn = data.GetIsMusicOn ();
+			selectedPlayer = data.GetSelectedPlayer ();
+			selectedWeapon = data.GetSelectedWeapon ();
+			coins = data.GetCoins ();
+			highscore = data.GetHighscore ();
+			players = data.GetPlayers ();
+			levels = data.GetLevels ();
+			weapons = data.GetWeapons ();
+			achievements = data.GetAchievements ();
+			collectedItems = data.GetCollectedItems ();
 		}
 	}
 }
@@ -201,7 +201,7 @@ class GameData {
 		this.selectedPlayer = selectedPlayer;
 	}
 
-	public int GetIsSelectedPlayer () {
+	public int GetSelectedPlayer () {
 		return selectedPlayer;
 	}
 
