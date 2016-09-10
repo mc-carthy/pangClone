@@ -11,7 +11,8 @@ public class GameController : MonoBehaviour {
 
 	public int currentLevel = -1;
 	public int currentScore;
-
+	public int currentLives;
+	public bool isGameStartedFromLevelMenu;
 	public bool isGameStartedForFirstTime;
 	public bool isMusicOn;
 	public int selectedPlayer;

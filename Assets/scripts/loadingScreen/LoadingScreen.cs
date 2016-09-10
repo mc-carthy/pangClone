@@ -42,6 +42,8 @@ public class LoadingScreen : MonoBehaviour {
 		yield return new WaitForSeconds (1f);
 		Hide ();
 
-		// GameplayController.play
+		if (GameplayController.instance != null) {
+			GameplayController.instance.SetHasLevelBegun (true);
+		}
 	}
 }

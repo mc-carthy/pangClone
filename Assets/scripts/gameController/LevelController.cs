@@ -46,11 +46,12 @@ public class LevelController : MonoBehaviour {
 		for (int i = 0; i < levels.Length; i++) {
 			if (string.Format ("level{0}", i) == level) {
 				GameController.instance.currentLevel = i;
-				LoadingScreen.instance.PlayLoadingScreen ();
 			}
 		}
-
-		SceneManager.LoadScene (level, LoadSceneMode.Single);
+		LoadingScreen.instance.PlayLoadingScreen ();
+		GameController.instance.isGameStartedFromLevelMenu = true;
+		//SceneManager.LoadScene (level, LoadSceneMode.Single);
+		SceneManager.LoadScene("levelSetup", LoadSceneMode.Single);
 	}
 
 	private void InitializeLevelMenu () {
