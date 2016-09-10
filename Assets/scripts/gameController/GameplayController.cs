@@ -10,9 +10,10 @@ public class GameplayController : MonoBehaviour {
 	public static int smallBallsCount;
 
 	public GameObject panelBG, levelFinishedPanel, playerDiedPanel, pausePanel;
-	public float levelTime;
+	public float levelTime = 300;
 	public Text liveText, scoreText, levelTimerText, showScoreAtEndOfLevelText, countdownAndBeginLevelText, watchVideoText;
 	public int playerLives, playerScore, coins;
+	public bool isLevelInProgress;
 
 	[SerializeField]
 	private GameObject[] topAndBottomBricks, leftBricks, rightBricks;
@@ -25,7 +26,7 @@ public class GameplayController : MonoBehaviour {
 	private GameObject topBrick, bottomBrick, leftBrick, rightBrick;
 	private Vector3 coordinates;
 	private float countdownBeforeLevelBegins = 3.0f;
-	private bool isGamePaused, hasLevelBegun, isLevelInProgress, countdownLevel;
+	private bool isGamePaused, hasLevelBegun, countdownLevel;
 
 	private void Awake () {
 		CreateInstance ();

@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.UI;
 using System.Collections;
 
 public class PlayerController : MonoBehaviour {
@@ -20,6 +21,7 @@ public class PlayerController : MonoBehaviour {
 	private bool canWalk;
 	private bool shootOnce, shootTwice;
 	private bool moveLeft, moveRight;
+	private Button shootBtn;
 
 	private void Awake () {
 		float cameraHeight = Camera.main.orthographicSize;
@@ -27,18 +29,24 @@ public class PlayerController : MonoBehaviour {
 		canWalk = true;
 		shootOnce = shootTwice = true;
 		MakeInstance ();
+
+		shootBtn = GameObject.FindGameObjectWithTag ("shootButton").GetComponent<Button> ();
+		shootBtn.onClick.RemoveAllListeners ();
+		shootBtn.onClick.AddListener (() => ShootArrow ());
 	}
 
 	private void Update () {
-		ShootArrow ();
+		//ShootArrow ();
 	}
 
 	private void FixedUpdate () {
 		PlayerMoveKeyboard ();
+		MovePlayerTouch ();
 	}
 
 	public void ShootArrow () {
-		if (Input.GetMouseButtonDown (0)) {
+		print ("shooting");
+		if (GameplayController.instance.isLevelInProgress) {
 			if (shootOnce) {
 				shootOnce = false;
 				StartCoroutine (PlayShootAnimation ());
@@ -62,6 +70,16 @@ public class PlayerController : MonoBehaviour {
 	public void StopMoving () {
 		moveLeft = moveRight = false;
 		anim.SetBool ("walk", false);
+	}
+
+	public void MoveThePlayerLeft () {
+		moveLeft = true;
+		moveRight = false;
+	}	
+
+	public void MoveThePlayerRight () {
+		moveRight = true;
+		moveLeft = false;
 	}
 
 	private void MakeInstance () {
@@ -109,5 +127,48 @@ public class PlayerController : MonoBehaviour {
 			}
 		}
 		rb.AddForce (new Vector2 (force, 0));
+	}
+
+	private void MovePlayerTouch () {
+		if (GameplayController.instance.isLevelInProgress) {
+			if (moveLeft) {
+				MoveLeft ();
+			}
+			if (moveRight) {
+				MoveRight ();
+			}
+		}
+	}
+
+	private void MoveRight () {
+		float force = 0.0f;
+		float velocity = Mathf.Abs (rb.velocity.x);
+
+		if (canWalk) {
+			if (velocity < maxVelocity) {
+				force = speed;
+			}
+
+			Vector3 scale = transform.localScale;
+			scale.x = 1.0f;
+			transform.localScale = scale;
+			anim.SetBool ("walk", true);
+		}
+	}
+
+	private void MoveLeft () {
+		float force = 0.0f;
+		float velocity = Mathf.Abs (rb.velocity.x);
+
+		if (canWalk) {
+			if (velocity < maxVelocity) {
+				force = speed;
+			}
+
+			Vector3 scale = transform.localScale;
+			scale.x = -1.0f;
+			transform.localScale = scale;
+			anim.SetBool ("walk", true);
+		}
 	}
 }
