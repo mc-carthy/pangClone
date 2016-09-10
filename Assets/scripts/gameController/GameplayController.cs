@@ -55,9 +55,116 @@ public class GameplayController : MonoBehaviour {
 		GameController.instance.currentScore = playerScore;
 
 		if (playerLives < 0) {
-
+			StartCoroutine (PromptUserToWatchVideo ());
 		} else {
 			StartCoroutine (PlayerDiedRestartLevel ());
+		}
+	}
+
+	public void CountSmallBalls () {
+		smallBallsCount--;
+		if (smallBallsCount <= 0) {
+			StartCoroutine (LevelCompleted ());
+		}
+	}
+
+	public void GoToMapButton () {
+		GameController.instance.currentScore = playerScore;
+
+		if (GameController.instance.highscore < GameController.instance.currentScore) {
+			GameController.instance.highscore = GameController.instance.currentScore;
+			GameController.instance.Save ();
+		}
+
+		if (Time.timeScale == 0) {
+			Time.timeScale = 1;
+		}
+
+		SceneManager.LoadScene ("levelMenu", LoadSceneMode.Single);
+
+		if (LoadingScreen.instance != null) {
+			LoadingScreen.instance.PlayLoadingScreen ();
+		}
+	}
+
+	public void RestartCurrentLevel () {
+		smallBallsCount = 0;
+		coins = 0;
+
+		GameController.instance.currentLives = playerLives;
+		GameController.instance.currentScore = playerScore;
+
+		SceneManager.LoadScene (SceneManager.GetActiveScene ().name, LoadSceneMode.Single);
+
+		if (LoadingScreen.instance != null) {
+			LoadingScreen.instance.PlayLoadingScreen ();
+		}
+	}
+
+	public void GoToNextLevel () {
+		GameController.instance.currentScore = playerScore;
+		GameController.instance.currentLives = playerLives;
+
+		if (GameController.instance.highscore < GameController.instance.currentScore) {
+			GameController.instance.highscore = GameController.instance.currentScore;
+			GameController.instance.Save ();
+		}
+
+		int nextLevel = GameController.instance.currentLevel;
+		nextLevel++;
+
+		if (nextLevel < GameController.instance.levels.Length) {
+			GameController.instance.currentLevel = nextLevel;
+		}
+
+		SceneManager.LoadScene ("level" + nextLevel, LoadSceneMode.Single);
+
+		if (LoadingScreen.instance != null) {
+			LoadingScreen.instance.PlayLoadingScreen ();
+		}
+	}
+
+	public void PauseGame () {
+		if (!hasLevelBegun) {
+			if (isLevelInProgress) {
+				if (!isGamePaused) {
+					countdownLevel = false;
+					isLevelInProgress = false;
+					isGamePaused = true;
+
+					panelBG.SetActive (true);
+					pausePanel.SetActive (true);
+
+					Time.timeScale = 0;
+				}
+			}
+		}
+	}
+
+	public void ResumeGame () {
+		countdownLevel = true;
+		isLevelInProgress = true;
+		isGamePaused = false;
+
+		panelBG.SetActive (false);
+		pausePanel.SetActive (false);
+
+		Time.timeScale = 1;
+	}
+
+	public void DontWatchVideoAndQuit () {
+		GameController.instance.currentScore = playerScore;
+
+		if (GameController.instance.highscore < GameController.instance.currentScore) {
+			GameController.instance.highscore = GameController.instance.currentScore;
+			GameController.instance.Save ();
+		}
+
+		Time.timeScale = 1;
+		SceneManager.LoadScene ("levelMenu", LoadSceneMode.Single);
+
+		if (LoadingScreen.instance != null) {
+			LoadingScreen.instance.PlayLoadingScreen ();
 		}
 	}
 
@@ -141,7 +248,7 @@ public class GameplayController : MonoBehaviour {
 				GameController.instance.currentScore = playerScore;
 
 				if (playerLives < 0) {
-					// prompt to watch a video to watch lives
+					StartCoroutine (PromptUserToWatchVideo ());
 				} else {
 					StartCoroutine (PlayerDiedRestartLevel ());
 				}
@@ -166,7 +273,7 @@ public class GameplayController : MonoBehaviour {
 		SceneManager.LoadScene (SceneManager.GetActiveScene ().name, LoadSceneMode.Single);
 
 		if (LoadingScreen.instance != null) {
-			LoadingScreen.instance.PlayFadeInAnimation ();
+			LoadingScreen.instance.PlayLoadingScreen ();
 		}
 	}
 
@@ -196,5 +303,35 @@ public class GameplayController : MonoBehaviour {
 
 		levelFinishedPanel.SetActive (true);
 		showScoreAtEndOfLevelText.text = playerScore.ToString ();
+	}
+
+	private IEnumerator PromptUserToWatchVideo () {
+		isLevelInProgress = false;
+		countdownLevel = false;
+		pauseBtn.interactable = false;
+		Time.timeScale = 0;
+
+		yield return StartCoroutine(MyCoroutine.WaitForRealSeconds(0.7f));
+
+		playerDiedPanel.SetActive (true);
+	}
+
+	private IEnumerator GivePlaterLivesAfterWatchingVideo () {
+		watchVideoText.text = "Thank You For Watching!";
+
+		yield return StartCoroutine (MyCoroutine.WaitForRealSeconds (2f));
+
+		coins = 0;
+		playerLives = 2;
+		smallBallsCount = 0;
+
+		GameController.instance.currentLives = playerLives;
+		GameController.instance.currentScore = playerScore;
+
+		Time.timeScale = 0;
+
+		if (LoadingScreen.instance != null) {
+			LoadingScreen.instance.FadeOut ();
+		}
 	}
 }
