@@ -45,8 +45,8 @@ public class PlayerController : MonoBehaviour {
 	}
 
 	public void ShootArrow () {
-		print ("shooting");
 		if (GameplayController.instance.isLevelInProgress) {
+			print ("test");
 			if (shootOnce) {
 				shootOnce = false;
 				StartCoroutine (PlayShootAnimation ());
@@ -154,6 +154,7 @@ public class PlayerController : MonoBehaviour {
 			transform.localScale = scale;
 			anim.SetBool ("walk", true);
 		}
+		rb.AddForce (new Vector2 (force, 0));
 	}
 
 	private void MoveLeft () {
@@ -162,7 +163,7 @@ public class PlayerController : MonoBehaviour {
 
 		if (canWalk) {
 			if (velocity < maxVelocity) {
-				force = speed;
+				force = -speed;
 			}
 
 			Vector3 scale = transform.localScale;
@@ -170,5 +171,6 @@ public class PlayerController : MonoBehaviour {
 			transform.localScale = scale;
 			anim.SetBool ("walk", true);
 		}
+		rb.AddForce (new Vector2 (force, 0));
 	}
 }

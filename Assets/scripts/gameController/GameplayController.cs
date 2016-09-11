@@ -198,7 +198,7 @@ public class GameplayController : MonoBehaviour {
 		countdownAndBeginLevelText.text = countdownBeforeLevelBegins.ToString ("F0");
 		if (countdownBeforeLevelBegins <= 0) {
 			Time.timeScale = 1;
-			hasLevelBegun = true;
+			hasLevelBegun = false;
 			isLevelInProgress = true;
 			countdownLevel = true;
 			countdownAndBeginLevelText.gameObject.SetActive (false);
@@ -274,7 +274,7 @@ public class GameplayController : MonoBehaviour {
 		SceneManager.LoadScene (SceneManager.GetActiveScene ().name, LoadSceneMode.Single);
 
 		if (LoadingScreen.instance != null) {
-			LoadingScreen.instance.PlayLoadingScreen ();
+			LoadingScreen.instance.PlayFadeInAnimation ();
 		}
 	}
 
