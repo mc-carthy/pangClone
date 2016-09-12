@@ -25,6 +25,13 @@ public class BallController : MonoBehaviour {
 
 		SetBallSpeed ();
 		InstantiateBalls ();
+
+		int chance = Random.Range (0, 1);
+		if (chance == 0) {
+			SetMoveLeft (true);
+		} else { 
+			SetMoveRight (true);
+		}
 	}
 
 	private void Update () {
