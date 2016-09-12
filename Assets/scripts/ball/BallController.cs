@@ -12,10 +12,17 @@ public class BallController : MonoBehaviour {
 	private GameObject originalBall;
 	[SerializeField]
 	private AudioClip[] popSounds;
+	[SerializeField]
+	private GameObject[] collectableItems;
 	private GameObject ball0, ball1;
 	private BallController ball0Script, ball1Script;
 
 	private void Awake () {
+		
+		if (this.gameObject.tag == "smallestBall") {
+			GameplayController.smallBallsCount++;
+		}
+
 		SetBallSpeed ();
 		InstantiateBalls ();
 	}
@@ -25,10 +32,12 @@ public class BallController : MonoBehaviour {
 	}
 
 	private void OnTriggerEnter2D (Collider2D trig) {
+		print (trig.tag);
 		if (trig.tag == "firstArrow" || trig.tag == "secondArrow" || trig.tag == "firstStickyArrow" || trig.tag == "secondStickyArrow") {
 			if (gameObject.tag != "smallestBall") {
 				InitializeBallsAndTurnOffCurrent ();
 			} else {
+				GameplayController.instance.CountSmallBalls ();
 				gameObject.SetActive (false);
 			}
 		}
@@ -65,6 +74,7 @@ public class BallController : MonoBehaviour {
 			rb.velocity = new Vector2 (0, forceY);
 		}
 		if (trig.tag == "leftBrick") {
+			print ("colliding with left brick");
 			moveLeft = false;
 			moveRight = true;
 		}
@@ -72,6 +82,14 @@ public class BallController : MonoBehaviour {
 			moveLeft = true;
 			moveRight = false;;		
 		}
+	}
+
+	private void OnEnable () {
+		PlayerController.explode += Explode;
+	}
+
+	private void OnDisable () {
+		PlayerController.explode -= Explode;
 	}
 
 	public void SetMoveLeft (bool moveLeft) {
@@ -82,6 +100,10 @@ public class BallController : MonoBehaviour {
 	public void SetMoveRight (bool moveRight) {
 		this.moveLeft = !moveRight;
 		this.moveRight = moveRight;
+	}
+
+	public void Explode (bool touchedGoldBall) {
+		StartCoroutine(ExplodeBall(touchedGoldBall));
 	}
 
 	private void InstantiateBalls () {
@@ -105,18 +127,22 @@ public class BallController : MonoBehaviour {
 		ball0.SetActive (true);
 		ball1.SetActive (true);
 
-		if (transform.position.y > 1.3f) {
-			ball0.GetComponent<Rigidbody2D> ().velocity = new Vector2 (0, 3.5f);
-			ball1.GetComponent<Rigidbody2D> ().velocity = new Vector2 (0, 3.5f);
-		} else if (transform.position.y > 1 && transform.position.y <= 1.3f) {
-			ball0.GetComponent<Rigidbody2D> ().velocity = new Vector2 (0, 2);
-			ball1.GetComponent<Rigidbody2D> ().velocity = new Vector2 (0, 2);
-		} else {
-			ball0.GetComponent<Rigidbody2D> ().velocity = new Vector2 (0, 5.5f);
-			ball0.GetComponent<Rigidbody2D> ().velocity = new Vector2 (0, 5.5f);
+		if (gameObject.tag != "smallestBall") {
+			if (transform.position.y > 1.3f) {
+				ball0.GetComponent<Rigidbody2D> ().velocity = new Vector2 (0, 3.5f);
+				ball1.GetComponent<Rigidbody2D> ().velocity = new Vector2 (0, 3.5f);
+			} else if (transform.position.y > 1 && transform.position.y <= 1.3f) {
+				ball0.GetComponent<Rigidbody2D> ().velocity = new Vector2 (0, 2);
+				ball1.GetComponent<Rigidbody2D> ().velocity = new Vector2 (0, 2);
+			} else {
+				ball0.GetComponent<Rigidbody2D> ().velocity = new Vector2 (0, 5.5f);
+				ball0.GetComponent<Rigidbody2D> ().velocity = new Vector2 (0, 5.5f);
+			}
 		}
 
 		AudioSource.PlayClipAtPoint(popSounds[Random.Range(0, popSounds.Length)], transform.position);
+		InitializeCollectableItems (transform.position);
+		GiveScoreAndCoins (this.gameObject.tag);
 		gameObject.SetActive (false);
 	}
 
@@ -154,6 +180,92 @@ public class BallController : MonoBehaviour {
 		default:
 			forceY = 0f;
 			break;
+		}
+	}
+
+	private void InitializeCollectableItems (Vector3 position) {
+
+		if (this.gameObject.tag == "smallestBall") {
+			int chance = Random.Range (0, 60);
+
+			if (chance >= 0 && chance < 21) {
+				Instantiate(collectableItems[Random.Range(4, collectableItems.Length)], position, Quaternion.identity);
+			} else if (chance >= 21 && chance < 36) {
+				Instantiate(collectableItems[Random.Range(0, 4)], position, Quaternion.identity);
+			}
+		}
+	}
+
+	private void GiveScoreAndCoins (string objTag) {
+		switch (objTag) {
+		case "largestBall":
+			GameplayController.instance.coins += Random.Range (15, 20);
+			GameplayController.instance.playerScore += Random.Range (600, 700);
+			break;
+		case "largeBall":
+			GameplayController.instance.coins += Random.Range (13, 18);
+			GameplayController.instance.playerScore += Random.Range (500, 600);
+			break;
+		case "mediumBall":
+			GameplayController.instance.coins += Random.Range (11, 16);
+			GameplayController.instance.playerScore += Random.Range (400, 500);
+			break;
+		case "smallBall":
+			GameplayController.instance.coins += Random.Range (10, 15);
+			GameplayController.instance.playerScore += Random.Range (300, 400);
+			break;
+		case "smallestBall":
+			GameplayController.instance.coins += Random.Range (9, 14);
+			GameplayController.instance.playerScore += Random.Range (200, 300);
+			break;
+		}
+	}
+
+	private IEnumerator ExplodeBall (bool touchedGoldBall) {
+		if (this.gameObject.tag == "largestBall") {
+			yield return null;
+		} else {
+			yield return StartCoroutine (MyCoroutine.WaitForRealSeconds (0.5f));
+		}
+
+		Vector3 pos = transform.position;
+
+		ball0.transform.position = pos;
+		ball1.transform.position = pos;
+
+		ball0Script.SetMoveLeft (true);
+		ball1Script.SetMoveRight (true);
+
+		ball0.SetActive (true);
+		ball1.SetActive (true);
+
+		if (gameObject.tag != "smallestBall") {
+			if (transform.position.y > 1.3f) {
+				ball0.GetComponent<Rigidbody2D> ().velocity = new Vector2 (0, 3.5f);
+				ball1.GetComponent<Rigidbody2D> ().velocity = new Vector2 (0, 3.5f);
+			} else if (transform.position.y > 1 && transform.position.y <= 1.3f) {
+				ball0.GetComponent<Rigidbody2D> ().velocity = new Vector2 (0, 2);
+				ball1.GetComponent<Rigidbody2D> ().velocity = new Vector2 (0, 2);
+			} else {
+				ball0.GetComponent<Rigidbody2D> ().velocity = new Vector2 (0, 5.5f);
+				ball0.GetComponent<Rigidbody2D> ().velocity = new Vector2 (0, 5.5f);
+			}
+		}
+
+		if (touchedGoldBall) {
+			if (this.gameObject.tag != "smallestBall") {
+				ball0Script.Explode (true);
+				ball1Script.Explode (true);
+			} else {
+				GameplayController.instance.CountSmallBalls ();
+			}
+			this.gameObject.SetActive (false);
+		} else {
+			if (this.gameObject.tag != "smallestBall") {
+				ball0Script.Explode (true);
+				ball1Script.Explode (true);
+				this.gameObject.SetActive (false);
+			}
 		}
 	}
 }

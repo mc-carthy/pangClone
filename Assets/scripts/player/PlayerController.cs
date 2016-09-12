@@ -8,6 +8,9 @@ public class PlayerController : MonoBehaviour {
 
 	public bool hasShield, isInvincible, singleArrow, doubleArrows, singleStickyArrow, doubleStickyArrows, shootFirstArrow, shootSecondArrow;
 
+	public delegate void Explode (bool touchedGoldBall);
+	public static event Explode explode;
+
 	private float speed = 8.0f, maxVelocity = 4.0f;
 	[SerializeField]
 	private Rigidbody2D rb;
@@ -37,6 +40,7 @@ public class PlayerController : MonoBehaviour {
 		shootBtn = GameObject.FindGameObjectWithTag ("shootButton").GetComponent<Button> ();
 		shootBtn.onClick.RemoveAllListeners ();
 		shootBtn.onClick.AddListener (() => ShootArrow ());
+		InitializePlayer ();
 	}
 
 	private void Update () {
@@ -120,7 +124,9 @@ public class PlayerController : MonoBehaviour {
 		}
 
 		if (trig.tag == "dynamite") {
-
+			if (explode != null) {
+				explode (false);
+			}
 		}
 	}
 
@@ -235,9 +241,11 @@ public class PlayerController : MonoBehaviour {
 	private void MovePlayerTouch () {
 		if (GameplayController.instance.isLevelInProgress) {
 			if (moveLeft) {
+				print ("Calling MoveLeft");
 				MoveLeft ();
 			}
 			if (moveRight) {
+				print ("Calling MoveRight");
 				MoveRight ();
 			}
 		}
@@ -246,7 +254,6 @@ public class PlayerController : MonoBehaviour {
 	private void MoveRight () {
 		float force = 0.0f;
 		float velocity = Mathf.Abs (rb.velocity.x);
-
 		if (canWalk) {
 			if (velocity < maxVelocity) {
 				force = speed;

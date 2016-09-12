@@ -225,15 +225,15 @@ public class GameplayController : MonoBehaviour {
 
 		topBrick = Instantiate(topAndBottomBricks[index]);
 		bottomBrick = Instantiate (topAndBottomBricks [index]);
-		leftBrick = Instantiate (leftBricks [index], new Vector3 (0, 0, 0), Quaternion.Euler (new Vector3 (0, 0, 270))) as GameObject;
-		rightBrick = Instantiate (rightBricks [index], new Vector3 (0, 0, 0), Quaternion.Euler (new Vector3 (0, 0, 90))) as GameObject;
+		leftBrick = Instantiate (leftBricks [index], new Vector3 (0, 0, 0), Quaternion.Euler (new Vector3 (0, 0, 90))) as GameObject;
+		rightBrick = Instantiate (rightBricks [index], new Vector3 (0, 0, 0), Quaternion.Euler (new Vector3 (0, 0, 270))) as GameObject;
 
 		topBrick.tag = "topBrick";
 
 		topBrick.transform.position = new Vector3 (-coordinates.x + 9, coordinates.y, 0);
 		bottomBrick.transform.position = new Vector3 (-coordinates.x + 9, -coordinates.y, 0);
-		leftBrick.transform.position = new Vector3 (coordinates.x, coordinates.y - 5, 0);
-		rightBrick.transform.position = new Vector3 (-coordinates.x, coordinates.y - 5, 0);
+		leftBrick.transform.position = new Vector3 (-coordinates.x, coordinates.y - 5, 0);
+		rightBrick.transform.position = new Vector3 (coordinates.x, coordinates.y - 5, 0);
 
 		Instantiate (players [GameController.instance.selectedPlayer]);
 	}
