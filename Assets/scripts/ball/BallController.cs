@@ -1,7 +1,10 @@
 ﻿using UnityEngine;
 using System.Collections;
+//[ExecuteInEditMode]
 
 public class BallController : MonoBehaviour {
+
+	public float x, y;
 
 	private float forceX, forceY;
 	[SerializeField]
@@ -34,12 +37,18 @@ public class BallController : MonoBehaviour {
 		}
 	}
 
+	private void Start () {
+		if (!GameplayController.instance.isLevelInProgress) {
+			transform.position = Camera.main.ViewportToWorldPoint (new Vector3 (x, y, 5));
+		}
+	}
+
 	private void Update () {
+		//transform.position = Camera.main.ViewportToWorldPoint (new Vector3 (x, y, 5));
 		Move ();
 	}
 
 	private void OnTriggerEnter2D (Collider2D trig) {
-		print (trig.tag);
 		if (trig.tag == "firstArrow" || trig.tag == "secondArrow" || trig.tag == "firstStickyArrow" || trig.tag == "secondStickyArrow") {
 			if (gameObject.tag != "smallestBall") {
 				InitializeBallsAndTurnOffCurrent ();
@@ -81,13 +90,23 @@ public class BallController : MonoBehaviour {
 			rb.velocity = new Vector2 (0, forceY);
 		}
 		if (trig.tag == "leftBrick") {
-			print ("colliding with left brick");
 			moveLeft = false;
 			moveRight = true;
 		}
 		if (trig.tag == "rightBrick") {
 			moveLeft = true;
 			moveRight = false;;		
+		}
+
+		if (trig.tag == "Player") {
+			if (PlayerController.instance.hasShield) {
+				PlayerController.instance.DestroyShield ();
+			} else {
+				if (!PlayerController.instance.isInvincible) {
+					Destroy (trig.gameObject);
+					GameplayController.instance.PlayerDied ();
+				}
+			}
 		}
 	}
 

@@ -33,7 +33,7 @@ public class PlayerController : MonoBehaviour {
 
 	private void Awake () {
 		float cameraHeight = Camera.main.orthographicSize;
-		height = -cameraHeight - 0.8f;
+		height = -cameraHeight + 1;
 
 		MakeInstance ();
 
@@ -133,7 +133,6 @@ public class PlayerController : MonoBehaviour {
 	public void ShootArrow () {
 		if (GameplayController.instance.isLevelInProgress) {
 			if (shootOnce) {
-
 				if (arrow == "arrow") {
 					Instantiate (arrows [0], new Vector3 (transform.position.x, height, 0f), Quaternion.identity);
 				} else if (arrow == "stickyArrow") {
@@ -241,11 +240,9 @@ public class PlayerController : MonoBehaviour {
 	private void MovePlayerTouch () {
 		if (GameplayController.instance.isLevelInProgress) {
 			if (moveLeft) {
-				print ("Calling MoveLeft");
 				MoveLeft ();
 			}
 			if (moveRight) {
-				print ("Calling MoveRight");
 				MoveRight ();
 			}
 		}
